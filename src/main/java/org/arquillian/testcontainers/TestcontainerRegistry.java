@@ -46,7 +46,7 @@ class TestcontainerRegistry implements Iterable<TestcontainerDescription> {
                 final TestcontainerDescription description = new TestcontainerDescription(testcontainer, result);
                 if (!name.isEmpty()) {
                     for (TestcontainerDescription containerDesc : this.containers) {
-                        if (name.equals(containerDesc.name)) {
+                        if (name.equals(containerDesc.name())) {
                             throw new IllegalArgumentException(
                                     String.format("A container with name \"%s\" is already registered", name));
                         }
@@ -69,8 +69,8 @@ class TestcontainerRegistry implements Iterable<TestcontainerDescription> {
      */
     GenericContainer<?> lookup(final String name) {
         for (TestcontainerDescription containerDesc : this.containers) {
-            if (containerDesc.name.equals(name)) {
-                return containerDesc.instance;
+            if (containerDesc.name().equals(name)) {
+                return containerDesc.instance();
             }
         }
         return null;
@@ -111,14 +111,14 @@ class TestcontainerRegistry implements Iterable<TestcontainerDescription> {
         final List<TestcontainerDescription> foundContainers = new ArrayList<>();
         if (qualifiers.isEmpty()) {
             for (TestcontainerDescription containerDesc : this.containers) {
-                if (containerDesc.name.isEmpty() && type.isAssignableFrom(containerDesc.instance.getClass())) {
+                if (containerDesc.name().isEmpty() && type.isAssignableFrom(containerDesc.instance().getClass())) {
                     foundContainers.add(containerDesc);
                 }
             }
         } else {
             for (TestcontainerDescription containerDesc : this.containers) {
                 for (Annotation qualifier : qualifiers) {
-                    if (containerDesc.name.isEmpty() && type.isAssignableFrom(containerDesc.instance.getClass())
+                    if (containerDesc.name().isEmpty() && type.isAssignableFrom(containerDesc.instance().getClass())
                             && type.isAnnotationPresent(qualifier.annotationType())) {
                         foundContainers.add(containerDesc);
                     }
@@ -132,7 +132,7 @@ class TestcontainerRegistry implements Iterable<TestcontainerDescription> {
             throw new IllegalArgumentException(
                     String.format("Multiple containers found for type %s: %s", type, foundContainers));
         }
-        return foundContainers.get(0).instance;
+        return foundContainers.get(0).instance();
     }
 
     /**

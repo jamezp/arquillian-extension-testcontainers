@@ -87,10 +87,10 @@ class TestContainersObserver {
         TestcontainerRegistry registry = containerRegistry.get();
         if (registry != null) {
             for (TestcontainerDescription container : registry) {
-                final TestcontainerEventContext context = new TestcontainerEventContext(container.name,
-                        container.testcontainer.value(), container.instance);
+                final TestcontainerEventContext context = new TestcontainerEventContext(container.name(),
+                        container.testcontainer().value(), container.instance());
                 beforeTestcontainerStop.fire(new BeforeTestcontainerStop(context));
-                container.instance.stop();
+                container.stop();
                 afterTestcontainerStop.fire(new AfterTestcontainerStop(context));
             }
         }
@@ -107,11 +107,11 @@ class TestContainersObserver {
         if (registry != null) {
             // Look for the servers to start on fields only
             for (TestcontainerDescription description : registry) {
-                if (description.testcontainer.value()) {
-                    final TestcontainerEventContext context = new TestcontainerEventContext(description.name,
-                            description.testcontainer.value(), description.instance);
+                if (description.testcontainer().value()) {
+                    final TestcontainerEventContext context = new TestcontainerEventContext(description.name(),
+                            description.testcontainer().value(), description.instance());
                     beforeTestcontainerStart.fire(new BeforeTestcontainerStart(context));
-                    description.instance.start();
+                    description.start();
                     afterTestcontainerStart.fire(new AfterTestcontainerStart(context));
                 }
             }
